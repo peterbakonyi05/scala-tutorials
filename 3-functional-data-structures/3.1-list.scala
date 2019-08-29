@@ -20,10 +20,10 @@ object List {
     }
 
   @annotation.tailrec
-  def foldLeft[A, B](as: List[A], z: B)(f: (B, A) => B): B =
+  def foldLeft[A, B](as: List[A], z: B)(f: (A, B) => B): B =
     as match {
       case Nil        => z
-      case Cons(h, t) => foldLeft(t, f(z, h))(f)
+      case Cons(h, t) => foldLeft(t, f(h, z))(f)
     }
 
   def sumOldImplementation(ints: List[Int]): Int = ints match {
@@ -88,7 +88,21 @@ object List {
 
   // using `foldLeft`
   def length2[A](l: List[A]): Int =
-    foldLeft(l, 0)((acc, _) => acc + 1)
+    foldLeft(l, 0)((h, acc) => acc + 1)
+
+  // using `foldLeft`
+  def sum3[A](l: List[Int]): Int =
+    foldLeft(l, 0)(_ + _)
+
+  // using `foldLeft`
+  def product3[A](l: List[Int]): Int =
+    foldLeft(l, 1)(_ * _)
+
+  def reverse[A](l: List[A]): List[A] =
+    foldLeft(l, List[A]())((i, reversedList) => Cons(i, reversedList))
+
+  def concat[A](l: List[List[A]]): List[A] =
+    foldRight(l, Nil: List[A])(append)
 
   // `apply` is a  variadic function: it accepts zero or more arguments of type A
   def apply[A](as: A*): List[A] =
@@ -126,4 +140,7 @@ object ListDemo extends App {
     case _                                     => 101
   }
   println(x1);
+
+  println("Length of list: " + List.length2(List(1, 2, 3, 4)))
+  println("Reverse of 1,2,3: " + List.reverse(List(1, 2, 3)))
 }
